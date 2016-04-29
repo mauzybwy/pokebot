@@ -1,0 +1,15 @@
+Pikachu:
+  name: 'Pikachu'
+  number: 25
+  poketype: 'electric'
+  level: 6
+  base_hp: 35
+  base_attack: 55
+  base_defense: 30
+  base_special: 50
+  base_speed: 90
+  state: 'new'
+  tekniks:
+    Tackle : -1
+    Thunder Shock : -1
+    Growl : -1

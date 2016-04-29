@@ -1,4 +1,5 @@
-from teknik import Teknik
+import itertools
+#from teknik import Teknik
 
 class Pokemon:
     #============================================================================
@@ -10,15 +11,21 @@ class Pokemon:
     #============================================================================
     # Instance data
     #============================================================================
-    def __init__(self, name, number, poketype, tekniks,
+    def __init__(self, name, number, poketype, tekniks, level,
                  base_hp, base_attack, base_defense, base_special, base_speed,
                  hp=None, attack=None, defense=None, special=None, speed=None,
-                 state = "wait"):
+                 accuracy=None, evasion=None, state = "new"):
+
+        # the only part of a Teknik that changes for a Pokemon is the pp field
+        self.__tekniks = {}
+        for key, value in tekniks.iteritems():
+            self.__tekniks[key] = value if value >= 0 else Teks.teks[key].base_pp
+        
         # set pokemon info
         self.name     = name
         self.number   = number
         self.poketype = poketype
-        self.tekniks  = tekniks
+        self.level    = level
 
         # set base stats
         self.base_hp      = base_hp
@@ -34,13 +41,19 @@ class Pokemon:
         self.defense = defense if defense is not None else base_defense
         self.special = special if special is not None else base_special
         self.speed   = speed   if speed   is not None else base_speed
-
+        
+        self.accuracy = accuracy if accuracy is not None else 1
+        self.evasion  = evasion  if evasion  is not None else 1
+        
         # set the state
         self.__state = state
 
-    def use_teknik(self, teknik, defender):
+    def fight(self, defender, teknik):
         """Uses a Teknik"""
-        Teknik.use(teknik, self, defender)
+
+        Teks.teks[teknik].use(self, defender)
+
+
         
     def take_damage(self, amount):
         """Take damage from a Teknik. Returns amount applied to pokemon."""
@@ -73,6 +86,8 @@ class Pokemon:
 
         return amount
 
+    
+    
     #============================================================================
     # Properties
     #============================================================================
