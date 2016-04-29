@@ -1,14 +1,23 @@
+import random
+
 class Teknik:
     #============================================================================
-    # Class data
-    #============================================================================
-    def __physical(attacker, defender):
-        pass
+    # Tekniks
+    #============================================================================    
+    randy = random.seed()    
+    
+    def __physical(tek, attacker, defender):
+        print tek.name
 
-    __tektable = {
+    
+    #============================================================================
+    # Class data
+    #============================================================================    
+    tektable = {
         'tackle': __physical
     }
 
+    
     #============================================================================
     # Instance data
     #============================================================================
@@ -21,7 +30,7 @@ class Teknik:
             raise Exception("Teknik not found!")
 
         # give the Teknik some functionality
-        self.__func = tektable[name]
+        self.__func = __tektable[name]
 
         # set info
         self.name  = name
@@ -37,7 +46,7 @@ class Teknik:
         self.pp       = pp       if pp       is not None else base_pp
 
     def use(self, attacker, defender):
-        return self.__func(attacker, defender)
+        return self.__func(self, attacker, defender)
     
     #============================================================================
     # Properties
