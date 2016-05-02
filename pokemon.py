@@ -1,5 +1,6 @@
 import itertools
-#from teknik import Teknik
+from teknik import Teknik
+from teks import Teks
 
 class Pokemon:
     #============================================================================
@@ -13,7 +14,8 @@ class Pokemon:
     #============================================================================
     def __init__(self, name, number, poketype, tekniks, level,
                  base_hp, base_attack, base_defense, base_special, base_speed,
-                 hp=None, attack=None, defense=None, special=None, speed=None,
+                 #hp=None, attack=None, defense=None, special=None, speed=None,
+                 stat_stages = {},
                  accuracy=None, evasion=None, state = "new"):
 
         # the only part of a Teknik that changes for a Pokemon is the pp field
@@ -27,6 +29,8 @@ class Pokemon:
         self.poketype = poketype
         self.level    = level
 
+        self.__stat_stages = stat_stages
+
         # set base stats
         self.base_hp      = base_hp
         self.base_attack  = base_attack
@@ -37,10 +41,10 @@ class Pokemon:
         # set current stats
         # these values can be zero, so check against None
         self.hp      = hp      if hp      is not None else base_hp
-        self.attack  = attack  if attack  is not None else base_attack
-        self.defense = defense if defense is not None else base_defense
-        self.special = special if special is not None else base_special
-        self.speed   = speed   if speed   is not None else base_speed
+        #self.attack  = attack  if attack  is not None else base_attack
+        #self.defense = defense if defense is not None else base_defense
+        #self.special = special if special is not None else base_special
+        #self.speed   = speed   if speed   is not None else base_speed
         
         self.accuracy = accuracy if accuracy is not None else 1
         self.evasion  = evasion  if evasion  is not None else 1
@@ -52,7 +56,6 @@ class Pokemon:
         """Uses a Teknik"""
 
         Teks.teks[teknik].use(self, defender)
-
 
         
     def take_damage(self, amount):
@@ -86,8 +89,20 @@ class Pokemon:
 
         return amount
 
-    
-    
+
+    def lower_stat(self, stat):
+        
+        
+        print self.name + "'s " + stat + "fell"
+        
+
+    def stage_multiplier(self, stat):
+        stage = self.__stat_stages[stat]
+        
+        ratio = (2 + abs(stage))/2
+
+        return ratio if stage >= 0 else (1 / ratio)
+        
     #============================================================================
     # Properties
     #============================================================================
@@ -101,3 +116,7 @@ class Pokemon:
             self.__state = value
         else:
             raise Exception("Invalid Pokemon state")
+
+    @property
+    def attack(self):
+        return self.__attack * self.stage_multiplier('attack')

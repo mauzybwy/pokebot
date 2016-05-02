@@ -1,15 +1,18 @@
+from teknik import Teknik
+from pokecalc import Pokecalc
+
 class Teks:
     #============================================================================
     # Tekniks
     #============================================================================        
     def __physical(tek, attacker, defender):
-        return Pokecalc.physical_damage(tek, attacker, defender)
+        defener.take_damage(Pokecalc.damage(tek, attacker, defender))
 
     def __thundershock(tek, attacker, defender):
-        pass
+        return Pokecalc.damage(tek, attacker, defender, special = True)
 
     def __growl(tek, attacker, defender):
-        pass
+        defender.lower_stat('attack')
 
     #============================================================================
     # Class data

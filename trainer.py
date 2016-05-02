@@ -1,5 +1,6 @@
 from pokemon import Pokemon
 from pokebelt import Pokebelt
+from pokebelt import Pokebelt
 
 class Trainer:
     #============================================================================
@@ -10,21 +11,35 @@ class Trainer:
     #============================================================================
     # Instance data
     #============================================================================
-    def __init__(self, profile, pokebelt=None, state="defend"):
+    def __init__(self, name,  pokes, profile=None, state="defend"):
+        self.name = name
         self.__profile = profile
-        self.__state   = TrainerState(state)
+        self.__state   = state
 
-        self.__pokebelt = pokebelt if pokebelt is not None else Pokebelt.basic_belt()
+        self.__pokebelt = Pokebelt(pokes)
 
     def take_turn(self):
         self.state = "attack"
 
-    def __fight(attacker, defender):
-        pass
+    def is_busy(self):
+        return self.state == "attack"
+
+    def is_leaving(self):
+        return self.state == "run" or self.state == "whiteout"
+
+    def fight(self, defender, teknik):
+        self.__pokebelt.active_pokemon.fight(defender.active_pokemon(), teknik)
+        self.state = "defend"
+
+    def run(self):
+        self.state = "run"
+
+    def active_pokemon(self):
+        return self.__pokebelt.active_pokemon
 
     def __change_pokemon():
         pass
-
+    
     def __use_item(self, item):
         pass
     

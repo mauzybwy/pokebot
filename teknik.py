@@ -1,5 +1,4 @@
-#from pokecalc import Pokecalc
-#from teks import Teks
+from pokecalc import Pokecalc
 
 class Teknik:
     
@@ -22,16 +21,15 @@ class Teknik:
         self.max_pp   = max_pp
         
     def use(self, attacker, defender):
-        out = self.__func(self, attacker, defender)
-
         print attacker.name,
         print "used",
-        print self.name,
-        print ":",
-        print out
+        print self.name        
         
-        return out
         
+        if Pokecalc.evades(tek, attacker, defender):
+            print "MISSED"
+        else:
+            self.__func(self, attacker, defender)
     
     #============================================================================
     # Properties

@@ -13,7 +13,7 @@ class Pokecalc:
         """
         Type Effectiveness.
         This can be either 0, 0.25, 0.5, 1, 2, or 4 depending on the type of attack
-        and the type of the defending Pokémon.
+        and the type of the defending Pokemon.
         """
         return 1
 
@@ -60,16 +60,17 @@ class Pokecalc:
     @staticmethod
     def adjusted_level(attacker):
         """Adjusts level for calculating damage"""
-        return (2 * attacker.level + 10) / 250.0
+        return (2 * attacker.level + 10) / 250.0        
 
     @staticmethod
-    def special_damage(tek, attacker, defender):
-        pass
-
-    @staticmethod
-    def physical_damage(tek, attacker, defender):
+    def damage(tek, attacker, defender, special = False):
+        if special:
+            ratio = Pokecalc.special_ratio(attacker, defender)
+        else:
+            ratio = Pokecalc.physical_ratio(attacker, defender)
+        
         first_part =( Pokecalc.adjusted_level(attacker)
-                      * Pokecalc.physical_ratio(attacker, defender)
+                      * ratio
                       * tek.power
                       + 2
         )
@@ -77,3 +78,7 @@ class Pokecalc:
         mod = Pokecalc.modifier(tek, attacker, defender)
         
         return int(first_part * mod)
+
+    @staticmethod
+    def evades(tek, attacker, defender):
+        return False
