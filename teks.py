@@ -4,15 +4,17 @@ from pokecalc import Pokecalc
 class Teks:
     #============================================================================
     # Tekniks
-    #============================================================================        
+    #============================================================================    
     def __physical(tek, attacker, defender):
         defener.take_damage(Pokecalc.damage(tek, attacker, defender))
 
     def __thundershock(tek, attacker, defender):
-        return Pokecalc.damage(tek, attacker, defender, special = True)
+        damage = Pokecalc.damage(tek, attacker, defender, special = True)
+        if Pokecalc.is_percent_chance(0.1):
+            defender.state = "paralyzed"
 
     def __growl(tek, attacker, defender):
-        defender.lower_stat('attack')
+        defender.shift_stat('attack', -1)
 
     #============================================================================
     # Class data

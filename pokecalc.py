@@ -4,6 +4,10 @@ class Pokecalc:
     randy = random.seed()
 
     @staticmethod
+    def is_percent_chance(pct):
+        return random.random() < pct
+    
+    @staticmethod
     def attack_random():
         """Random number between 0.85 and 1"""
         return random.random() * 0.15 + 0.85

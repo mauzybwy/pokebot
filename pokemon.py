@@ -14,9 +14,15 @@ class Pokemon:
     #============================================================================
     def __init__(self, name, number, poketype, tekniks, level,
                  base_hp, base_attack, base_defense, base_special, base_speed,
-                 #hp=None, attack=None, defense=None, special=None, speed=None,
-                 stat_stages = {},
-                 accuracy=None, evasion=None, state = "new"):
+                 state = "new",
+                 stat_stages = {
+                     'attack'   : 0,
+                     'defense'  : 0,
+                     'special'  : 0,
+                     'speed'    : 0,
+                     'accuracy' : 0,
+                     'evasion'  : 0
+                 }):
 
         # the only part of a Teknik that changes for a Pokemon is the pp field
         self.__tekniks = {}
@@ -24,30 +30,22 @@ class Pokemon:
             self.__tekniks[key] = value if value >= 0 else Teks.teks[key].base_pp
         
         # set pokemon info
-        self.name     = name
-        self.number   = number
-        self.poketype = poketype
-        self.level    = level
+        self.__name     = name
+        self.__number   = number
+        self.__poketype = poketype
+        self.__level    = level
 
         self.__stat_stages = stat_stages
 
         # set base stats
-        self.base_hp      = base_hp
-        self.base_attack  = base_attack
-        self.base_defense = base_defense
-        self.base_special = base_special
-        self.base_speed   = base_speed
+        self.__base_hp      = base_hp
+        self.__base_attack  = base_attack
+        self.__base_defense = base_defense
+        self.__base_special = base_special
+        self.__base_speed   = base_speed
 
         # set current stats
-        # these values can be zero, so check against None
-        self.hp      = hp      if hp      is not None else base_hp
-        #self.attack  = attack  if attack  is not None else base_attack
-        #self.defense = defense if defense is not None else base_defense
-        #self.special = special if special is not None else base_special
-        #self.speed   = speed   if speed   is not None else base_speed
-        
-        self.accuracy = accuracy if accuracy is not None else 1
-        self.evasion  = evasion  if evasion  is not None else 1
+        self.__hp      = hp      if hp      is not None else base_hp
         
         # set the state
         self.__state = state
@@ -65,12 +63,12 @@ class Pokemon:
         assert self.state != "fainted" # item/Teknik will have to revive first
         
         # dealt more than available, pokemon faints
-        if amount >= self.hp:
-            self.hp = 0
-            self.state = "faint"
-            amount -= self.hp
+        if amount >= self.__hp:
+            self.__hp = 0
+            self.__state = "faint"
+            amount -= self.__hp
         else:
-            self.hp -= amount
+            self.__hp -= amount
 
         return amount
 
@@ -78,30 +76,63 @@ class Pokemon:
         """Heals hp. Returns amount of hp healed."""
 
         # ASSERTIONS
-        assert self.state != "fainted" # item/Teknik will have to revive first
+        assert self.__state != "fainted" # item/Teknik will have to revive first
         
         # can't heal more than the base_hp
-        if self.hp + amount >= self.base_hp:
-            amount = self.base_hp - self.hp
-            self.hp = self.base_hp
+        if self.__hp + amount >= self.__base_hp:
+            amount = self.__base_hp - self.__hp
+            self.__hp = self.__base_hp
         else:
-            self.hp += amount
+            self.__hp += amount
 
         return amount
 
-
-    def lower_stat(self, stat):
-        
-        
-        print self.name + "'s " + stat + "fell"
-        
-
-    def stage_multiplier(self, stat):
+    def __stage_multiplier(self, stat):
         stage = self.__stat_stages[stat]
         
         ratio = (2 + abs(stage))/2
 
         return ratio if stage >= 0 else (1 / ratio)
+        
+    
+    def shift_stat(self, stat, amount):
+        # don't do anything if there is no actual change
+        if amount == 0:
+            return
+        
+        curr = self.__stat_stages[stat]
+        sign = -1 if curr < 0 else 1
+
+        # do all math with positive numbers, apply sign at end
+        if amount < 0:
+            amount = abs(amount)
+            
+        if abs(curr) >= 6:
+            print "Nothing happened!"
+            self.__stat_stages[stat] = 6 * sign # correct, just in case
+        else:
+            total = curr + amount
+            if total > 6:
+                amount = 6 - curr
+
+            # prepare to print the qualitative amount risen/fallen
+            if amount == 1:
+               qual_amt = " "
+            elif amount == 2:
+                qual_amt = " greatly "
+            elif amount >= 3:
+                qual_amt = " severely "
+            else:
+                raise Exception("Error in calculating stat change")
+
+            # prepare to print whether the stat has risen or fallen
+            direction = "rose!" if sign > 0 else "fell!"
+
+            # actually apply the change
+            self.__stat_stages[stat] += (amount * sign)
+            
+            # print message
+            print self.name + "'s " + stat + qual_amt + direction
         
     #============================================================================
     # Properties
@@ -112,6 +143,8 @@ class Pokemon:
 
     @state.setter
     def state(self, value):
+        assert self.__state != "fainted"
+        
         if value in __states:
             self.__state = value
         else:
@@ -119,4 +152,24 @@ class Pokemon:
 
     @property
     def attack(self):
-        return self.__attack * self.stage_multiplier('attack')
+        return int(self.__attack * self.__stage_multiplier('attack'))
+
+    @property
+    def defense(self):
+        return int(self.__defense * self.__stage_multiplier('defense'))
+    
+    @property
+    def special(self):
+        return int(self.__special * self.__stage_multiplier('special'))
+    
+    @property
+    def speed(self):
+        return int(self.__speed * self.__stage_multiplier('speed'))
+
+    @property
+    def evasion(self):
+        return self.__stage_multiplier('accuracy')
+    
+    @property
+    def accuracy(self):
+        return self.stage_multiplier('evasion')

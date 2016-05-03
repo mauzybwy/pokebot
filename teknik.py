@@ -12,13 +12,13 @@ class Teknik:
         self.__func = func
 
         # set info
-        self.name     = name
-        self.tektype  = tektype
-        self.power    = power
-        self.category = category
-        self.accuracy = accuracy
-        self.base_pp  = base_pp
-        self.max_pp   = max_pp
+        self.__name     = name
+        self.__tektype  = tektype
+        self.__power    = power
+        self.__category = category
+        self.__accuracy = accuracy
+        self.__base_pp  = base_pp
+        self.__max_pp   = max_pp
         
     def use(self, attacker, defender):
         print attacker.name,
@@ -26,7 +26,7 @@ class Teknik:
         print self.name        
         
         
-        if Pokecalc.evades(tek, attacker, defender):
+        if tek.power and Pokecalc.evades(tek, attacker, defender):
             print "MISSED"
         else:
             self.__func(self, attacker, defender)
@@ -34,3 +34,30 @@ class Teknik:
     #============================================================================
     # Properties
     #============================================================================
+    @property
+    def name():
+        return self.__name
+
+    @property
+    def tektype():
+        return self.__tektype
+    
+    @property
+    def power():
+        return self.__power
+
+    @property
+    def category():
+        return self.__category
+
+    @property
+    def accuracy():
+        return self.__accuracy
+
+    @property
+    def base_pp():
+        return self.__base_pp
+
+    @property
+    def max_pp():
+        return self.__max_pp
